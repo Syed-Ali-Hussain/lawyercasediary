@@ -1,38 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download File</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f9;
-        }
-        h2 {
-            color: #333;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Coming Soon</title>
+  <style>
+    body {
+      background-color: #f4f4f4;
+      color: #333;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 3rem;
+    }
+  </style>
 </head>
 <body>
-    <p>Redirecting to your download...</p>
-    <form id="downloadForm" method="POST" style="display:none;">
-        <input type="hidden" name="fileUrl" id="fileUrl">
-    </form>
-    <script>
-        window.onload = function() {
-            // Access the POST data if available
-            if (window.history.state && window.history.state.fileUrl) {
-                window.location.href = window.history.state.fileUrl;
-            } else {
-                document.body.innerHTML = "<h2>Invalid or missing download link</h2>";
-            }
-        };
-    </script>
+  <h1>Coming Soon</h1>
 </body>
 </html>
