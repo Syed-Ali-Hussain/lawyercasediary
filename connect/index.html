@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Opening Lawyer Case Diary...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    window.onload = function () {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('id');
+
+      if (!email) {
+        document.body.innerText = "Missing email address in link.";
+        return;
+      }
+
+      const deepLink = `lawyercasediary://lawyercasediary.com/connect/?id=${email}`;
+      window.location.href = deepLink;
+
+      setTimeout(() => {
+        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+        const fallback = isIOS
+          ? "https://apps.apple.com/app/YOUR-IOS-APP-ID"
+          : "https://play.google.com/store/apps/details?id=com.BrandRaptor.lawyercasediary";
+
+        window.location.href = fallback;
+      }, 2000);
+    };
+  </script>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #fafafa;
+    }
+  </style>
+</head>
+<body>
+  <p>Opening Lawyer Case Diary app...</p>
+</body>
+</html>
