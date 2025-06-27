@@ -17,42 +17,95 @@
   <meta name="twitter:description" content="Tap to send an invitation and start sharing legal cases securely and instantly.">
   <meta name="twitter:image" content="https://lawyercasediary.thebrandraptor.com/preview.png">
 
-  <script>
-    window.onload = function () {
-      const params = new URLSearchParams(window.location.search);
-      const email = params.get('id');
-
-      if (!email) {
-        document.body.innerText = "Missing email address in link.";
-        return;
-      }
-
-      const deepLink = `lawyercasediary://lawyercasediary.com/connect/?id=${email}`;
-      window.location.href = deepLink;
-
-      setTimeout(() => {
-        const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-        const fallback = isIOS
-          ? "https://apps.apple.com/app/YOUR-IOS-APP-ID"
-          : "https://play.google.com/store/apps/details?id=com.BrandRaptor.lawyercasediary";
-
-        window.location.href = fallback;
-      }, 2000);
-    };
-  </script>
-
   <style>
     body {
       font-family: sans-serif;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
       background: #fafafa;
+      text-align: center;
+      padding: 20px;
+    }
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border-left-color: #09f;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <p>Opening Lawyer Case Diary app...</p>
+  <div class="spinner"></div>
+  <p>Opening Lawyer Case Diary...</p>
+  <p>If the app doesn't open, <a id="manualLink" href="#">tap here</a>.</p>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const params = new URLSearchParams(window.location.search);
+      const email = params.get('id');
+      const manualLink = document.getElementById('manualLink');
+
+      if (!email) {
+        document.body.innerHTML = "<p>Error: Missing email address in link.</p>";
+        return;
+      }
+
+      // Check if the device is Android or iOS
+      const isAndroid = /Android/i.test(navigator.userAgent);
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      // Set up deep links
+      const iosDeepLink = `lawyercasediary://lawyercasediary.com/connect/?id=${encodeURIComponent(email)}`;
+      const androidIntentLink = `intent://lawyercasediary.com/connect/?id=${encodeURIComponent(email)}#Intent;scheme=lawyercasediary;package=com.BrandRaptor.lawyercasediary;action=android.intent.action.VIEW;end`;
+
+      // Set up fallback URLs
+      const iosFallback = "https://apps.apple.com/app/YOUR-IOS-APP-ID"; // Replace with App Store URL
+      const androidFallback = "market://details?id=com.BrandRaptor.lawyercasediary"; // Opens Play Store app directly
+
+      // Set manual link href
+      manualLink.href = isAndroid ? androidIntentLink : iosDeepLink;
+      manualLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = isAndroid ? androidIntentLink : iosDeepLink;
+        setTimeout(() => {
+          window.location.href = isAndroid ? androidFallback : iosFallback;
+        }, 100);
+      });
+
+      // Try to open the app (Android uses intent://, iOS uses custom scheme)
+      window.location.href = isAndroid ? androidIntentLink : iosDeepLink;
+
+      // If app isn't opened, redirect to store after delay
+      setTimeout(() => {
+        if (!document.hidden) {
+          window.location.href = isAndroid ? androidFallback : iosFallback;
+        }
+      }, 2000);
+
+      // Handle visibility change (if user returns to browser after app opens)
+      document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+          // App likely opened successfully
+          clearTimeout(fallbackTimeout);
+        }
+      });
+
+      let fallbackTimeout = setTimeout(() => {
+        if (!document.hidden) {
+          window.location.href = isAndroid ? androidFallback : iosFallback;
+        }
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
